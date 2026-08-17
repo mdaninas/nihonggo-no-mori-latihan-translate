@@ -1,0 +1,12 @@
+# Textbook source photos — private study material, not part of the app
+/Contoh Soal 1/
+/Contoh Soal 2/
+/Contoh Soal 3/
+/Contoh Soal 4/
+/Contoh Soal 5/
+app/assets/questions/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
