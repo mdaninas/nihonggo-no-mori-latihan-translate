@@ -56,9 +56,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
     final choice = _draftChoice;
     if (choice == null || widget.session.selectedAnswer(question.id) != null) return;
     HapticFeedback.mediumImpact();
-    final award = widget.session.selectAnswer(question.id, choice);
+    final correct = choice == question.answerIndex;
+    final award = widget.session.selectAnswer(question.id, choice, correct: correct);
     widget.session.revealAnswer(question.id);
-    showXpToast(context, award);
+    showAnswerToast(context, award);
   }
 
   @override

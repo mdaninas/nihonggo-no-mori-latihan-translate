@@ -41,18 +41,42 @@ void main() {
     }
   });
 
-  test('first answers grant XP and later changes do not', () {
+  test('first correct answers grant XP and later changes do not', () {
     final stats = LearnerStats();
     final day = DateTime(2026, 8, 17);
-    final first = stats.recordAnswer(1, 0, day);
+    final first = stats.recordAnswer(1, 0, day, correct: true);
     expect(first.xpGained, 10);
     expect(first.firstAnswer, isTrue);
+    expect(first.correct, isTrue);
     expect(stats.xp, 10);
     expect(stats.level, 1);
-    final again = stats.recordAnswer(1, 2, day);
+    final again = stats.recordAnswer(1, 2, day, correct: true);
     expect(again.xpGained, 0);
     expect(stats.xp, 10);
     expect(stats.answers[1], 2);
+  });
+
+  test('first wrong answer grants no XP and stores the choice', () {
+    final stats = LearnerStats();
+    final day = DateTime(2026, 8, 17);
+    final wrong = stats.recordAnswer(1, 2, day, correct: false);
+    expect(wrong.xpGained, 0);
+    expect(wrong.firstAnswer, isTrue);
+    expect(wrong.correct, isFalse);
+    expect(stats.xp, 0);
+    expect(stats.streakDays, 0);
+    expect(stats.answers[1], 2);
+  });
+
+  test('correcting after a wrong first answer does not grant XP', () {
+    final stats = LearnerStats();
+    final day = DateTime(2026, 8, 17);
+    stats.recordAnswer(1, 2, day, correct: false);
+    final retry = stats.recordAnswer(1, 0, day, correct: true);
+    expect(retry.xpGained, 0);
+    expect(retry.firstAnswer, isFalse);
+    expect(stats.xp, 0);
+    expect(stats.answers[1], 0);
   });
 
   test('level increases after 100 XP and streak continues the next day', () {
@@ -60,13 +84,13 @@ void main() {
     final day = DateTime(2026, 8, 17);
     Award? last;
     for (var i = 0; i < 10; i++) {
-      last = stats.recordAnswer(i + 1, 0, day);
+      last = stats.recordAnswer(i + 1, 0, day, correct: true);
     }
     expect(stats.xp, 100);
     expect(last!.leveledUp, isTrue);
     expect(stats.level, 2);
     expect(stats.displayStreak(day), 1);
-    stats.recordAnswer(20, 0, day.add(const Duration(days: 1)));
+    stats.recordAnswer(20, 0, day.add(const Duration(days: 1)), correct: true);
     expect(stats.displayStreak(day.add(const Duration(days: 1))), 2);
     expect(stats.displayStreak(day.add(const Duration(days: 3))), 0);
   });

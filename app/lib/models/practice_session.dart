@@ -15,8 +15,8 @@ class PracticeSession extends ChangeNotifier {
   bool isRevealed(int questionId) => _stats.revealed.contains(questionId);
   ThemeMode get themeMode => _stats.darkMode ? ThemeMode.dark : ThemeMode.light;
 
-  Award selectAnswer(int questionId, int optionIndex, {DateTime? now}) {
-    final award = _stats.recordAnswer(questionId, optionIndex, now ?? DateTime.now());
+  Award selectAnswer(int questionId, int optionIndex, {required bool correct, DateTime? now}) {
+    final award = _stats.recordAnswer(questionId, optionIndex, now ?? DateTime.now(), correct: correct);
     notifyListeners();
     persist();
     return award;

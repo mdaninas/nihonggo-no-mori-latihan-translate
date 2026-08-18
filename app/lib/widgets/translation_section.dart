@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/question.dart';
 import '../theme/app_theme.dart';
 
 class TranslationSection extends StatelessWidget {
@@ -33,7 +34,20 @@ class TranslationSection extends StatelessWidget {
             style: TextStyle(color: AppTheme.blue, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 6),
-          Text(translation, style: bodyStyle),
+          Text.rich(
+            TextSpan(
+              style: bodyStyle,
+              children: [
+                for (final span in parseTranslationMarks(translation))
+                  TextSpan(
+                    text: span.text,
+                    style: span.highlight
+                        ? bodyStyle?.copyWith(color: AppTheme.coral, fontWeight: FontWeight.w800)
+                        : null,
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );

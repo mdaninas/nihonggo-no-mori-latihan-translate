@@ -4,12 +4,14 @@ class Award {
     required this.leveledUp,
     required this.level,
     required this.firstAnswer,
+    required this.correct,
   });
 
   final int xpGained;
   final bool leveledUp;
   final int level;
   final bool firstAnswer;
+  final bool correct;
 }
 
 class LearnerStats {
@@ -50,19 +52,25 @@ class LearnerStats {
 
   void markTipsSeen(DateTime now) => lastTipsDay = dayKey(now);
 
-  Award recordAnswer(int questionId, int optionIndex, DateTime now) {
+  Award recordAnswer(int questionId, int optionIndex, DateTime now, {required bool correct}) {
     final first = !answers.containsKey(questionId);
     answers[questionId] = optionIndex;
     var gained = 0;
     var leveled = false;
-    if (first) {
+    if (first && correct) {
       final before = level;
       xp += xpPerAnswer;
       gained = xpPerAnswer;
       leveled = level > before;
       touchStreak(now);
     }
-    return Award(xpGained: gained, leveledUp: leveled, level: level, firstAnswer: first);
+    return Award(
+      xpGained: gained,
+      leveledUp: leveled,
+      level: level,
+      firstAnswer: first,
+      correct: correct,
+    );
   }
 
   void touchStreak(DateTime now) {

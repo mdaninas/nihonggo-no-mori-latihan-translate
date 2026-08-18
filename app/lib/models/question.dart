@@ -153,6 +153,36 @@ List<JapanesePart> parseRuby(String annotated) {
 
 String stripRuby(String annotated) => parseRuby(annotated).map((part) => part.text).join();
 
+final _translationMarkPattern = RegExp(r'\{([^{}]*)\}');
+
+/// Removes `{` / `}` wrappers from a translation string, keeping the marked text.
+String stripTranslationMarks(String translation) =>
+    translation.replaceAllMapped(_translationMarkPattern, (match) => match.group(1)!);
+
+class TranslationSpan {
+  const TranslationSpan(this.text, {this.highlight = false});
+
+  final String text;
+  final bool highlight;
+}
+
+/// Splits a translation into plain and highlighted spans marked with `{...}`.
+List<TranslationSpan> parseTranslationMarks(String translation) {
+  final spans = <TranslationSpan>[];
+  var cursor = 0;
+  for (final match in _translationMarkPattern.allMatches(translation)) {
+    if (match.start > cursor) {
+      spans.add(TranslationSpan(translation.substring(cursor, match.start)));
+    }
+    spans.add(TranslationSpan(match.group(1)!, highlight: true));
+    cursor = match.end;
+  }
+  if (cursor < translation.length) {
+    spans.add(TranslationSpan(translation.substring(cursor)));
+  }
+  return spans;
+}
+
 List<JapanesePart> parseAnnotatedSentence(String annotated, {required String testedWord}) {
   final raw = <JapanesePart>[];
   var cursor = 0;
