@@ -35,6 +35,12 @@ class PracticeSession extends ChangeNotifier {
     persist();
   }
 
+  void setDisplayName(String name) {
+    _stats.displayName = name.trim();
+    notifyListeners();
+    persist();
+  }
+
   void markTipsSeen({DateTime? now}) {
     _stats.markTipsSeen(now ?? DateTime.now());
     notifyListeners();

@@ -21,6 +21,7 @@ class LearnerStats {
     this.lastPracticeDay,
     this.darkMode = false,
     this.lastTipsDay,
+    this.displayName = '',
     Map<int, int>? answers,
     Set<int>? revealed,
   })  : answers = answers ?? <int, int>{},
@@ -34,8 +35,14 @@ class LearnerStats {
   String? lastPracticeDay;
   bool darkMode;
   String? lastTipsDay;
+  String displayName;
   final Map<int, int> answers;
   final Set<int> revealed;
+
+  String get profileName {
+    final name = displayName.trim();
+    return name.isEmpty ? 'Pembelajar N3' : name;
+  }
 
   int get level => xp ~/ xpPerLevel + 1;
   int get xpIntoLevel => xp % xpPerLevel;
@@ -96,6 +103,7 @@ class LearnerStats {
         'lastPracticeDay': lastPracticeDay,
         'darkMode': darkMode,
         'lastTipsDay': lastTipsDay,
+        'displayName': displayName,
         'answers': answers.map((key, value) => MapEntry(key.toString(), value)),
         'revealed': revealed.toList(),
       };
@@ -121,6 +129,7 @@ class LearnerStats {
       lastPracticeDay: json['lastPracticeDay'] as String?,
       darkMode: json['darkMode'] as bool? ?? false,
       lastTipsDay: json['lastTipsDay'] as String?,
+      displayName: json['displayName'] as String? ?? '',
       answers: answers,
       revealed: revealed,
     );

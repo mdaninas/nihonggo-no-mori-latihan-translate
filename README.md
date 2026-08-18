@@ -1,13 +1,13 @@
 # Nihongo no Mori
 
-Aplikasi latihan **JLPT N3 文字・語彙** (huruf & kosakata) untuk Android. Versi **1.0.0**.
+Aplikasi latihan **JLPT N3 文字・語彙** (huruf & kosakata) untuk Android. Versi **1.1.0**.
 
 Berjalan **offline**. Ditemani Kapizamurai (カピ侍). Bahasa antarmuka: Indonesia.
 
 ## Unduh & pasang (Android)
 
-1. Buka **[rilis v1.0.0](https://github.com/mdaninas/nihonggo-no-mori-latihan-translate/releases/tag/v1.0.0)** (atau [rilis terbaru](https://github.com/mdaninas/nihonggo-no-mori-latihan-translate/releases/latest)).
-2. Unduh berkas **`NihongoNoMori-1.0.0.apk`**.
+1. Buka **[rilis v1.1.0](https://github.com/mdaninas/nihonggo-no-mori-latihan-translate/releases/tag/v1.1.0)** (atau [rilis terbaru](https://github.com/mdaninas/nihonggo-no-mori-latihan-translate/releases/latest)).
+2. Unduh berkas **`NihongoNoMori-1.1.0.apk`**.
 3. Di HP, izinkan pasang dari sumber tidak dikenal (Pengaturan → keamanan / pasang aplikasi tidak dikenal → izinkan untuk Chrome atau Files).
 4. Buka APK yang baru diunduh, lalu ketuk **Pasang**.
 
@@ -29,6 +29,7 @@ Progres tiap sub-bab **terpisah**. Pilih jawaban dulu, lalu **Kirim**. Furigana 
 ## Fitur
 
 - Streak, XP, dan level (10 XP per soal pertama; 100 XP per level)
+- Tab Progress dan Profil
 - Mode gelap
 - Furigana dan terjemahan yang bisa di-toggle
 - Maskot Kapizamurai di beranda (progress XP tidak tertutup maskot)

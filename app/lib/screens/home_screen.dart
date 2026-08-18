@@ -9,7 +9,8 @@ import '../theme/app_theme.dart';
 import '../theme/section_style.dart';
 import '../widgets/mascot.dart';
 import '../widgets/section_icon.dart';
-import 'placeholder_tab.dart';
+import 'profile_tab.dart';
+import 'progress_tab.dart';
 import 'question_screen.dart';
 
 enum _SectionSort { syllabus, title, progress }
@@ -49,17 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _openFirstSection(BuildContext context) {
-    for (final chapter in chapters) {
-      for (final section in chapter.sections) {
-        if (section.hasQuestions) {
-          _openSection(context, section);
-          return;
-        }
-      }
-    }
-  }
-
   int _answeredCount(SyllabusSection section) {
     return section.questions.where((question) => session.selectedAnswer(question.id) != null).length;
   }
@@ -85,10 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onNavTap(int index) {
     HapticFeedback.selectionClick();
-    if (index == 2) {
-      _openFirstSection(context);
-      return;
-    }
     setState(() => _selectedIndex = index);
   }
 
@@ -132,24 +118,13 @@ class _HomeScreenState extends State<HomeScreen> {
         final hasUnseenTips = session.stats.hasUnseenTips(now);
 
         return Scaffold(
-          drawer: _AppDrawer(
-            darkMode: session.stats.darkMode,
-            onToggleTheme: session.toggleTheme,
-          ),
           body: SafeArea(
             child: switch (_selectedIndex) {
-              1 => const PlaceholderTab(
-                  title: 'Materi',
-                  message: 'Ringkasan materi N3 akan tersedia di sini.',
+              1 => ProgressTab(
+                  session: session,
+                  onOpenSection: (section) => _openSection(context, section),
                 ),
-              3 => const PlaceholderTab(
-                  title: 'Progress',
-                  message: 'Statistik belajar lengkap akan tersedia di sini.',
-                ),
-              4 => const PlaceholderTab(
-                  title: 'Profil',
-                  message: 'Pengaturan akun dan profil belajar akan tersedia di sini.',
-                ),
+              2 => ProfileTab(session: session),
               _ => _HomeBody(
                   now: now,
                   hasUnseenTips: hasUnseenTips,
@@ -165,23 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           bottomNavigationBar: NavigationBar(
-            selectedIndex: _selectedIndex == 2 ? 0 : _selectedIndex,
+            selectedIndex: _selectedIndex,
             onDestinationSelected: _onNavTap,
             destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.home_outlined),
                 selectedIcon: Icon(Icons.home_rounded, color: AppTheme.coral),
                 label: 'Beranda',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.menu_book_outlined),
-                selectedIcon: Icon(Icons.menu_book_rounded),
-                label: 'Materi',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.edit_outlined),
-                selectedIcon: Icon(Icons.edit_rounded),
-                label: 'Latihan',
               ),
               NavigationDestination(
                 icon: Icon(Icons.insights_outlined),
@@ -197,86 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
-    );
-  }
-}
-
-class _AppDrawer extends StatelessWidget {
-  const _AppDrawer({
-    required this.darkMode,
-    required this.onToggleTheme,
-  });
-
-  final bool darkMode;
-  final VoidCallback onToggleTheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-              child: Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: AppTheme.coral,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Image.asset(
-                      'assets/app_logo.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child: Text(
-                            '森',
-                            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Nihongo no Mori', style: Theme.of(context).textTheme.titleMedium),
-                        Text('Latihan harian N3', style: Theme.of(context).textTheme.bodyMedium),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
-            SwitchListTile(
-              title: const Text('Mode gelap'),
-              subtitle: Text(darkMode ? 'Aktif' : 'Nonaktif'),
-              secondary: Icon(darkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded),
-              value: darkMode,
-              onChanged: (_) {
-                HapticFeedback.selectionClick();
-                onToggleTheme();
-              },
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                'Aplikasi latihan JLPT N3 dengan Kapizamurai — mascot hutan yang menemani belajarmu.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -402,17 +287,8 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        IconButton(
-          tooltip: 'Menu',
-          onPressed: () {
-            HapticFeedback.selectionClick();
-            Scaffold.of(context).openDrawer();
-          },
-          icon: const Icon(Icons.menu_rounded),
-        ),
         Expanded(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 width: 40,
