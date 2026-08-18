@@ -6,6 +6,9 @@
 /Contoh Soal 5/
 app/assets/questions/
 
+# Built APK copies for local upload (releases go to GitHub Releases, not git)
+/dist/
+
 # OS
 .DS_Store
 Thumbs.db
