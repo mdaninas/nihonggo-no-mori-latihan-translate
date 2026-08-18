@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/question.dart';
-import '../theme/app_theme.dart';
 import 'furigana_text.dart';
 
 class JapaneseText extends StatelessWidget {
@@ -22,9 +21,9 @@ class JapaneseText extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
         decoration: BoxDecoration(
-          color: AppTheme.paper,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppTheme.line),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -22,35 +22,35 @@ class SectionStyle {
           kanji: '漢',
           japaneseLabel: '漢字の読み',
           accent: AppTheme.coral,
-          wash: Color(0xFFFFE8E3),
+          wash: Color(0xFFFFF1F2),
         );
       case 2:
         return const SectionStyle(
           kanji: '書',
           japaneseLabel: '表記',
           accent: AppTheme.blue,
-          wash: Color(0xFFE7EEF8),
+          wash: Color(0xFFEEF2FF),
         );
       case 3:
         return const SectionStyle(
           kanji: '文',
           japaneseLabel: '文脈規定',
           accent: AppTheme.sage,
-          wash: Color(0xFFE3F2EB),
+          wash: Color(0xFFECFDF5),
         );
       case 4:
         return const SectionStyle(
           kanji: '換',
           japaneseLabel: '言い換え',
           accent: AppTheme.gold,
-          wash: Color(0xFFF8EEDC),
+          wash: Color(0xFFFEF3C7),
         );
       case 5:
         return const SectionStyle(
           kanji: '用',
           japaneseLabel: '用法',
           accent: AppTheme.plum,
-          wash: Color(0xFFEDE7F6),
+          wash: Color(0xFFF3E8FF),
         );
       default:
         return const SectionStyle(
@@ -60,5 +60,9 @@ class SectionStyle {
           wash: AppTheme.mist,
         );
     }
+  }
+
+  Color washFor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? accent.withValues(alpha: 0.22) : wash;
   }
 }

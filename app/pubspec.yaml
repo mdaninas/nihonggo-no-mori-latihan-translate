@@ -17,3 +17,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/app_logo.png
+    - assets/kapizamurai_hero.png
+    - assets/kapizamurai_happy.png
+    - assets/kapizamurai_zen.png
+    - assets/kapizamurai_determined.png
+    - assets/kapizamurai_study.png
+    - assets/kapizamurai_eat.png
+    - assets/kapizamurai_sleep.png

@@ -4,34 +4,31 @@ import 'models/practice_session.dart';
 import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const NihongoNoMoriApp());
+  final session = await PracticeSession.load();
+  runApp(NihongoNoMoriApp(session: session));
 }
 
-class NihongoNoMoriApp extends StatefulWidget {
-  const NihongoNoMoriApp({super.key});
+class NihongoNoMoriApp extends StatelessWidget {
+  const NihongoNoMoriApp({required this.session, super.key});
 
-  @override
-  State<NihongoNoMoriApp> createState() => _NihongoNoMoriAppState();
-}
-
-class _NihongoNoMoriAppState extends State<NihongoNoMoriApp> {
-  final _session = PracticeSession();
-
-  @override
-  void dispose() {
-    _session.dispose();
-    super.dispose();
-  }
+  final PracticeSession session;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Nihongo no Mori',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      home: HomeScreen(session: _session),
+    return AnimatedBuilder(
+      animation: session,
+      builder: (context, _) {
+        return MaterialApp(
+          title: 'Nihongo no Mori',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: session.themeMode,
+          home: HomeScreen(session: session),
+        );
+      },
     );
   }
 }

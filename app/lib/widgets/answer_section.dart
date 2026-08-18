@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/question.dart';
-import '../theme/app_theme.dart';
 
 class AnswerSection extends StatelessWidget {
   const AnswerSection({required this.question, required this.selectedAnswer, super.key});
@@ -17,11 +16,14 @@ class AnswerSection extends StatelessWidget {
         : isCorrect
             ? 'Jawabanmu benar!'
             : 'Belum tepat, perhatikan bacaannya.';
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: isCorrect ? const Color(0xFFE9F6EF) : const Color(0xFFFFF5E9),
+        color: isCorrect
+            ? (dark ? const Color(0xFF1F3A2E) : const Color(0xFFE9F6EF))
+            : (dark ? const Color(0xFF3A2F1F) : const Color(0xFFFFF5E9)),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -33,7 +35,7 @@ class AnswerSection extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             question.explanation,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppTheme.ink),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],
       ),

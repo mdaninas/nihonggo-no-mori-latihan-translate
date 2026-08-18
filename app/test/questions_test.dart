@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_no_mori/data/questions.dart';
 import 'package:nihongo_no_mori/data/syllabus.dart';
+import 'package:nihongo_no_mori/models/learner_stats.dart';
 
 void main() {
   test('all transcribed questions have valid choices and answer indexes', () {
@@ -38,5 +39,35 @@ void main() {
         expect(ids.add(question.id), isTrue, reason: 'duplicate id ${question.id}');
       }
     }
+  });
+
+  test('first answers grant XP and later changes do not', () {
+    final stats = LearnerStats();
+    final day = DateTime(2026, 8, 17);
+    final first = stats.recordAnswer(1, 0, day);
+    expect(first.xpGained, 10);
+    expect(first.firstAnswer, isTrue);
+    expect(stats.xp, 10);
+    expect(stats.level, 1);
+    final again = stats.recordAnswer(1, 2, day);
+    expect(again.xpGained, 0);
+    expect(stats.xp, 10);
+    expect(stats.answers[1], 2);
+  });
+
+  test('level increases after 100 XP and streak continues the next day', () {
+    final stats = LearnerStats();
+    final day = DateTime(2026, 8, 17);
+    Award? last;
+    for (var i = 0; i < 10; i++) {
+      last = stats.recordAnswer(i + 1, 0, day);
+    }
+    expect(stats.xp, 100);
+    expect(last!.leveledUp, isTrue);
+    expect(stats.level, 2);
+    expect(stats.displayStreak(day), 1);
+    stats.recordAnswer(20, 0, day.add(const Duration(days: 1)));
+    expect(stats.displayStreak(day.add(const Duration(days: 1))), 2);
+    expect(stats.displayStreak(day.add(const Duration(days: 3))), 0);
   });
 }

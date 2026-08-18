@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../data/syllabus.dart';
 import '../models/practice_session.dart';
@@ -6,6 +7,7 @@ import '../theme/app_theme.dart';
 import '../theme/section_style.dart';
 import '../widgets/answer_section.dart';
 import '../widgets/japanese_text.dart';
+import '../widgets/mascot.dart';
 import '../widgets/option_card.dart';
 import '../widgets/translation_section.dart';
 
@@ -27,6 +29,7 @@ class QuestionScreen extends StatefulWidget {
 
 class _QuestionScreenState extends State<QuestionScreen> {
   late int _index;
+  int? _draftChoice;
   final _scrollController = ScrollController();
   bool _showFurigana = false;
   bool _showTranslation = false;
@@ -35,12 +38,26 @@ class _QuestionScreenState extends State<QuestionScreen> {
   void initState() {
     super.initState();
     _index = widget.initialIndex.clamp(0, widget.section.questions.length - 1).toInt();
+    _draftChoice = widget.session.selectedAnswer(widget.section.questions[_index].id);
   }
 
   void _changeQuestion(int nextIndex) {
     if (nextIndex < 0 || nextIndex >= widget.section.questions.length) return;
-    setState(() => _index = nextIndex);
+    setState(() {
+      _index = nextIndex;
+      _draftChoice = widget.session.selectedAnswer(widget.section.questions[nextIndex].id);
+    });
     _scrollController.animateTo(0, duration: const Duration(milliseconds: 180), curve: Curves.easeOut);
+  }
+
+  void _submit(BuildContext context) {
+    final question = widget.section.questions[_index];
+    final choice = _draftChoice;
+    if (choice == null || widget.session.selectedAnswer(question.id) != null) return;
+    HapticFeedback.mediumImpact();
+    final award = widget.session.selectAnswer(question.id, choice);
+    widget.session.revealAnswer(question.id);
+    showXpToast(context, award);
   }
 
   @override
@@ -58,8 +75,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
     return AnimatedBuilder(
       animation: widget.session,
       builder: (context, _) {
-        final selectedAnswer = widget.session.selectedAnswer(question.id);
-        final isRevealed = widget.session.isRevealed(question.id);
+        final submittedAnswer = widget.session.selectedAnswer(question.id);
+        final submitted = submittedAnswer != null;
+        final selectedAnswer = submittedAnswer ?? _draftChoice;
+        final isRevealed = submitted || widget.session.isRevealed(question.id);
         return Scaffold(
           appBar: AppBar(
             titleSpacing: 0,
@@ -119,23 +138,37 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   children: [
                     JapaneseText(question: question, showFurigana: _showFurigana),
                     const SizedBox(height: 14),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                    Row(
                       children: [
-                        FilterChip(
-                          avatar: const Text('あ', style: TextStyle(fontWeight: FontWeight.w800)),
-                          label: const Text('Furigana'),
-                          selected: _showFurigana,
-                          showCheckmark: false,
-                          onSelected: (selected) => setState(() => _showFurigana = selected),
+                        Expanded(
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              FilterChip(
+                                avatar: const Text('あ', style: TextStyle(fontWeight: FontWeight.w800)),
+                                label: const Text('Furigana'),
+                                selected: _showFurigana,
+                                showCheckmark: false,
+                                onSelected: (selected) => setState(() => _showFurigana = selected),
+                              ),
+                              FilterChip(
+                                avatar: const Icon(Icons.translate_rounded, size: 18),
+                                label: const Text('Terjemahan'),
+                                selected: _showTranslation,
+                                showCheckmark: false,
+                                onSelected: (selected) => setState(() => _showTranslation = selected),
+                              ),
+                            ],
+                          ),
                         ),
-                        FilterChip(
-                          avatar: const Icon(Icons.translate_rounded, size: 18),
-                          label: const Text('Terjemahan'),
-                          selected: _showTranslation,
-                          showCheckmark: false,
-                          onSelected: (selected) => setState(() => _showTranslation = selected),
+                        MoriMascot(
+                          pose: !submitted
+                              ? MascotPose.study
+                              : submittedAnswer == question.answerIndex
+                                  ? MascotPose.happy
+                                  : MascotPose.determined,
+                          size: 64,
                         ),
                       ],
                     ),
@@ -154,12 +187,19 @@ class _QuestionScreenState extends State<QuestionScreen> {
                         index: optionIndex,
                         option: question.options[optionIndex],
                         isSelected: selectedAnswer == optionIndex,
-                        isRevealed: isRevealed,
+                        isRevealed: isRevealed && submitted,
                         isCorrect: question.answerIndex == optionIndex,
-                        onTap: () => widget.session.selectAnswer(question.id, optionIndex),
+                        onTap: submitted
+                            ? null
+                            : () {
+                                HapticFeedback.selectionClick();
+                                setState(() => _draftChoice = optionIndex);
+                              },
                       ),
                     const SizedBox(height: 4),
-                    if (!isRevealed)
+                    if (submitted)
+                      AnswerSection(question: question, selectedAnswer: submittedAnswer)
+                    else if (!isRevealed)
                       OutlinedButton.icon(
                         onPressed: () => widget.session.revealAnswer(question.id),
                         icon: const Icon(Icons.visibility_outlined),
@@ -174,10 +214,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 top: false,
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-                  decoration: const BoxDecoration(
-                    color: AppTheme.paper,
-                    border: Border(top: BorderSide(color: AppTheme.line)),
-                    boxShadow: [BoxShadow(color: Color(0x0F172033), blurRadius: 12, offset: Offset(0, -4))],
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                    boxShadow: const [BoxShadow(color: Color(0x0F172033), blurRadius: 12, offset: Offset(0, -4))],
                   ),
                   child: Row(
                     children: [
@@ -190,12 +230,23 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: FilledButton.icon(
-                          onPressed: _index == total - 1 ? null : () => _changeQuestion(_index + 1),
-                          icon: const Icon(Icons.arrow_forward_rounded),
-                          label: const Text('Berikutnya'),
-                          iconAlignment: IconAlignment.end,
-                        ),
+                        child: submitted
+                            ? FilledButton.icon(
+                                onPressed: _index == total - 1
+                                    ? () => Navigator.of(context).pop()
+                                    : () => _changeQuestion(_index + 1),
+                                icon: Icon(_index == total - 1 ? Icons.check_rounded : Icons.arrow_forward_rounded),
+                                label: Text(_index == total - 1 ? 'Selesai' : 'Berikutnya'),
+                                iconAlignment: IconAlignment.end,
+                                style: FilledButton.styleFrom(backgroundColor: look.accent),
+                              )
+                            : FilledButton.icon(
+                                onPressed: _draftChoice == null ? null : () => _submit(context),
+                                icon: const Icon(Icons.send_rounded),
+                                label: const Text('Kirim'),
+                                iconAlignment: IconAlignment.end,
+                                style: FilledButton.styleFrom(backgroundColor: look.accent),
+                              ),
                       ),
                     ],
                   ),

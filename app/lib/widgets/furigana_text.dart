@@ -17,10 +17,11 @@ class FuriganaText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ink = Theme.of(context).colorScheme.onSurface;
     final baseStyle = Theme.of(context).textTheme.bodyLarge!.copyWith(
           fontSize: fontSize,
           height: 1.55,
-          color: AppTheme.ink,
+          color: ink,
         );
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.end,
@@ -60,7 +61,8 @@ class _RubyToken extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final kanjiColor = highlight ? AppTheme.coral : AppTheme.ink;
+    final ink = Theme.of(context).colorScheme.onSurface;
+    final kanjiColor = highlight ? AppTheme.coral : ink;
     return Padding(
       padding: const EdgeInsets.only(top: 2, right: 1),
       child: Column(
