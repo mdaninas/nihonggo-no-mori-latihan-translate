@@ -26,6 +26,7 @@ class Question {
     required this.options,
     required this.answerIndex,
     required this.explanation,
+    this.optionGlosses,
   });
 
   factory Question.reading({
@@ -39,6 +40,7 @@ class Question {
     required List<String> options,
     required int answerIndex,
     required String explanation,
+    List<String>? optionGlosses,
   }) {
     return Question.item(
       id: id,
@@ -51,6 +53,7 @@ class Question {
       options: options,
       answerIndex: answerIndex,
       explanation: explanation,
+      optionGlosses: optionGlosses,
     );
   }
 
@@ -65,6 +68,7 @@ class Question {
     required List<String> options,
     required int answerIndex,
     required String explanation,
+    List<String>? optionGlosses,
   }) {
     final parts = parseAnnotatedSentence(sentence, testedWord: testedWord);
     return Question(
@@ -78,6 +82,7 @@ class Question {
       options: options,
       answerIndex: answerIndex,
       explanation: explanation,
+      optionGlosses: optionGlosses,
     );
   }
 
@@ -89,11 +94,13 @@ class Question {
   final List<JapanesePart> japaneseParts;
   final String translation;
   final List<String> options;
+  final List<String>? optionGlosses;
   final int answerIndex;
   final String explanation;
 
   String get japaneseText => japaneseParts.map((part) => part.text).join();
   String get answer => options[answerIndex];
+  String get answerSurface => stripRuby(answer);
 
   String get stemLabel {
     switch (kind) {
@@ -127,6 +134,24 @@ class Question {
 }
 
 final _rubyPattern = RegExp(r'([\u4E00-\u9FFF々〆ヵヶ]+)\u005B([^\]]+)\u005D');
+
+List<JapanesePart> parseRuby(String annotated) {
+  final parts = <JapanesePart>[];
+  var cursor = 0;
+  for (final match in _rubyPattern.allMatches(annotated)) {
+    if (match.start > cursor) {
+      parts.add(JapanesePart.text(annotated.substring(cursor, match.start)));
+    }
+    parts.add(JapanesePart.furigana(match.group(1)!, match.group(2)!));
+    cursor = match.end;
+  }
+  if (cursor < annotated.length) {
+    parts.add(JapanesePart.text(annotated.substring(cursor)));
+  }
+  return parts;
+}
+
+String stripRuby(String annotated) => parseRuby(annotated).map((part) => part.text).join();
 
 List<JapanesePart> parseAnnotatedSentence(String annotated, {required String testedWord}) {
   final raw = <JapanesePart>[];

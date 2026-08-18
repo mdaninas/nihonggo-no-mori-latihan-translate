@@ -31,7 +31,7 @@ class AnswerSection extends StatelessWidget {
         children: [
           Text(response, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          Text('Jawaban: ${String.fromCharCode(65 + question.answerIndex)}. ${question.answer}'),
+          Text('Jawaban: ${String.fromCharCode(65 + question.answerIndex)}. ${question.answerSurface}'),
           const SizedBox(height: 8),
           Text(
             question.explanation,

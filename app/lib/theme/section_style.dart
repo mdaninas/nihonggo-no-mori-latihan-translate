@@ -8,12 +8,14 @@ class SectionStyle {
     required this.japaneseLabel,
     required this.accent,
     required this.wash,
+    this.iconAsset,
   });
 
   final String kanji;
   final String japaneseLabel;
   final Color accent;
   final Color wash;
+  final String? iconAsset;
 
   static SectionStyle of(int number) {
     switch (number) {
@@ -23,6 +25,7 @@ class SectionStyle {
           japaneseLabel: '漢字の読み',
           accent: AppTheme.coral,
           wash: Color(0xFFFFF1F2),
+          iconAsset: 'assets/section_kanji.png',
         );
       case 2:
         return const SectionStyle(
@@ -30,6 +33,7 @@ class SectionStyle {
           japaneseLabel: '表記',
           accent: AppTheme.blue,
           wash: Color(0xFFEEF2FF),
+          iconAsset: 'assets/section_spelling.png',
         );
       case 3:
         return const SectionStyle(
@@ -37,6 +41,7 @@ class SectionStyle {
           japaneseLabel: '文脈規定',
           accent: AppTheme.sage,
           wash: Color(0xFFECFDF5),
+          iconAsset: 'assets/section_context.png',
         );
       case 4:
         return const SectionStyle(
@@ -44,6 +49,7 @@ class SectionStyle {
           japaneseLabel: '言い換え',
           accent: AppTheme.gold,
           wash: Color(0xFFFEF3C7),
+          iconAsset: 'assets/section_synonym.png',
         );
       case 5:
         return const SectionStyle(
@@ -51,6 +57,7 @@ class SectionStyle {
           japaneseLabel: '用法',
           accent: AppTheme.plum,
           wash: Color(0xFFF3E8FF),
+          iconAsset: 'assets/section_usage.png',
         );
       default:
         return const SectionStyle(

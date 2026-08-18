@@ -9,6 +9,7 @@ import '../widgets/answer_section.dart';
 import '../widgets/japanese_text.dart';
 import '../widgets/mascot.dart';
 import '../widgets/option_card.dart';
+import '../widgets/section_icon.dart';
 import '../widgets/translation_section.dart';
 
 class QuestionScreen extends StatefulWidget {
@@ -84,13 +85,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
             titleSpacing: 0,
             title: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(color: look.wash, borderRadius: BorderRadius.circular(12)),
-                  child: Text(look.kanji, style: TextStyle(color: look.accent, fontWeight: FontWeight.w800, fontSize: 18)),
-                ),
+                SectionIcon(style: look, size: 36),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -186,6 +181,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       OptionCard(
                         index: optionIndex,
                         option: question.options[optionIndex],
+                        showFurigana: _showFurigana,
+                        gloss: _showTranslation ? (question.optionGlosses?[optionIndex]) : null,
                         isSelected: selectedAnswer == optionIndex,
                         isRevealed: isRevealed && submitted,
                         isCorrect: question.answerIndex == optionIndex,

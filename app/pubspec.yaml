@@ -26,3 +26,8 @@ flutter:
     - assets/kapizamurai_study.png
     - assets/kapizamurai_eat.png
     - assets/kapizamurai_sleep.png
+    - assets/section_kanji.png
+    - assets/section_spelling.png
+    - assets/section_context.png
+    - assets/section_synonym.png
+    - assets/section_usage.png

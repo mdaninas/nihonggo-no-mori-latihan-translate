@@ -8,6 +8,7 @@ import '../models/practice_session.dart';
 import '../theme/app_theme.dart';
 import '../theme/section_style.dart';
 import '../widgets/mascot.dart';
+import '../widgets/section_icon.dart';
 import 'placeholder_tab.dart';
 import 'question_screen.dart';
 
@@ -749,16 +750,7 @@ class _SectionCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(color: wash, borderRadius: BorderRadius.circular(14)),
-                      child: Text(
-                        look.kanji,
-                        style: TextStyle(color: look.accent, fontSize: 24, fontWeight: FontWeight.w800, height: 1),
-                      ),
-                    ),
+                    SectionIcon(style: look, size: 52),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
